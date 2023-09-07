@@ -1,0 +1,53 @@
+#include <stdio.h>
+
+void trans(int arr[][3], int size) {
+    for (int i = 0; i < size; i++) {
+        for (int j = i + 1; j < size; j++) {
+            int temp = arr[i][j];
+            arr[i][j] = arr[j][i];
+            arr[j][i] = temp;
+        }
+    }
+}
+
+// Function to reverse the rows of a matrix (2D array)
+void reverse(int arr[][3], int size) {
+    for (int i = 0; i < size; i++) {
+        for (int j = 0; j < size / 2; j++) {
+            int temp = arr[i][j];
+            arr[i][j] = arr[i][size - j - 1];
+            arr[i][size - j - 1] = temp;
+        }
+    }
+}
+
+
+void print(int arr[][3], int size) {
+    for (int i = 0; i < size; i++) {
+        for (int j = 0; j < size; j++) {
+            printf("%d ", arr[i][j]);
+        }
+        printf("\n");
+    }
+}
+
+int main() {
+    int matrix[3][3] = {
+        {1, 2, 3},
+        {4, 5, 6},
+        {7, 8, 9}
+    };
+    int size = 3;
+
+    printf("Original matrix:\n");
+    print(matrix, size);
+
+    
+    trans(matrix, size);
+    reverse(matrix, size);
+
+    printf("Rotated matrix:\n");
+    print(matrix, size);
+
+    return 0;
+}

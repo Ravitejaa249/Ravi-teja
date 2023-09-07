@@ -1,0 +1,150 @@
+#include<stdio.h>
+#include<stdlib.h>
+
+struct node {
+    int pow;
+    int coef;
+    struct node* next;
+};
+
+void add_polynomial(struct node** poly,int n) {
+    int pow, coef, temp;
+    struct node* temp2 = NULL;
+    struct node* lastNode = NULL;
+for(int i=1;i<=n;i++)
+{
+        temp2 = (struct node*)malloc(sizeof(struct node));
+        printf("\n Coefficient: ");
+        scanf("%d", &temp2->coef);
+        printf(" Power: ");
+        scanf("%d", &temp2->pow);
+        temp2->next = NULL;
+
+        if (*poly == NULL) {
+            *poly = temp2;
+            lastNode = temp2;
+        } else {
+            lastNode->next = temp2;
+            lastNode = temp2;
+        }
+
+}}
+
+void sumPolynomials(struct node** sum, struct node* first, struct node* second) {
+    struct node* sume = NULL;
+    struct node* lastNode = NULL;
+    
+    while (first && second) {
+        struct node* newNode = (struct node*)malloc(sizeof(struct node));
+        
+        if (first->pow > second->pow) {
+            newNode->coef = first->coef;
+            newNode->pow = first->pow;
+            first = first->next;
+        } else if (first->pow < second->pow) {
+            newNode->coef = second->coef;
+            newNode->pow = second->pow;
+            second = second->next;
+        } else {
+            newNode->coef = first->coef + second->coef;
+            newNode->pow = first->pow;
+            first = first->next;
+            second = second->next;
+        }
+        
+        newNode->next = NULL;
+        if (*sum == NULL) {
+            *sum = newNode;
+            lastNode = newNode;
+        } else {
+            lastNode->next = newNode;
+            lastNode = newNode;
+        }
+    }
+    
+    while (first || second) {
+        struct node* newNode = (struct node*)malloc(sizeof(struct node));
+        newNode->next = NULL;
+        
+        if (first) {
+            newNode->coef = first->coef;
+            newNode->pow = first->pow;
+            first = first->next;
+        } else if (second) {
+            newNode->coef = second->coef;
+            newNode->pow = second->pow;
+            second = second->next;
+        }
+        
+        if (*sum == NULL) {
+            *sum = newNode;
+            lastNode = newNode;
+        } else {
+            lastNode->next = newNode;
+            lastNode = newNode;
+        }
+    }
+}
+
+void multiplyPolynomial(struct node** mult, struct node* first, struct node* second) {
+    struct node* mul = NULL;
+    struct node* lastNode = NULL;
+
+    while (first != NULL) {
+        struct node* temp = second;
+        while (temp != NULL) {
+            struct node* newNode = (struct node*)malloc(sizeof(struct node));
+            newNode->coef = (first->coef * temp->coef);
+            newNode->pow = (first->pow + temp->pow);
+            newNode->next = NULL;
+
+            if (*mult == NULL) {
+                *mult = newNode;
+                lastNode = newNode;
+            } else {
+                lastNode->next = newNode;
+                lastNode = newNode;
+            }
+
+            temp = temp->next;
+        }
+        first = first->next;
+    }
+}
+
+void displayPolynomial(struct node* poly) {
+    while (poly != NULL) {
+        printf("%dX^%d", poly->coef, poly->pow);
+        poly = poly->next;
+        if (poly != NULL)
+            printf("+");
+    }
+    printf("\n");
+}
+
+int main() {
+    struct node* first = NULL;
+    struct node* second = NULL;
+    struct node* sum = NULL;
+    struct node* mult = NULL;
+    int n1,n2;
+    printf("First polynomial : \n");
+    printf("enter no. of terms : \n");
+    scanf("%d",&n1);
+    add_polynomial(&first,n1);
+    printf("Enter second polynomial : \n");
+    printf("enter no. of terms : \n");
+    scanf("%d",&n2);
+    printf("Second polynomial:\n");
+    add_polynomial(&second,n2);
+
+    printf("Sum = ");
+    sumPolynomials(&sum, first, second);
+    displayPolynomial(sum);
+
+    printf("Multiplication = ");
+    multiplyPolynomial(&mult, first, second);
+    displayPolynomial(mult);
+
+    return 0;
+}
