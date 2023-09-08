@@ -10,7 +10,6 @@ void trans(int arr[][3], int size) {
     }
 }
 
-// Function to reverse the rows of a matrix (2D array)
 void reverse(int arr[][3], int size) {
     for (int i = 0; i < size; i++) {
         for (int j = 0; j < size / 2; j++) {
