@@ -1,0 +1,181 @@
+#include<stdio.h>
+#include<stdlib.h>
+
+struct node {
+    int data;
+    struct node* lnext;
+    struct node* rnext;
+};
+
+struct node* create(int k) {
+    struct node* newnode = (struct node*)malloc(sizeof(struct node));
+    newnode->data = k;
+    newnode->lnext = newnode->rnext = NULL;
+    return newnode;
+}
+
+struct node* insert(struct node* root, int k) {
+    if (root == NULL) {
+        return create(k);
+    } else if (k < root->data) {
+        root->lnext = insert(root->lnext, k);
+    } else if (k > root->data) {
+        root->rnext = insert(root->rnext, k);
+    }
+    return root;
+}
+
+void preorder(struct node* root) {
+    if (root != NULL) {
+        printf("%d ", root->data);
+        preorder(root->lnext);
+        preorder(root->rnext);
+    }
+}
+
+void inorder(struct node* root) {
+    if (root != NULL) {
+        inorder(root->lnext);
+        printf("%d ", root->data);
+        inorder(root->rnext);
+    }
+}
+
+void postorder(struct node* root) {
+    if (root != NULL) {
+        postorder(root->lnext);
+        postorder(root->rnext);
+        printf("%d ", root->data);
+    }
+}
+
+int search(struct node* root, int key) {
+    if (root == NULL) {
+        return 0;  
+    } else if (key == root->data) {
+        return 1; 
+    } else if (key < root->data) {
+        return search(root->lnext, key);
+    } else {
+        return search(root->rnext, key);
+    }
+}
+
+struct node* smallest(struct node* root) {
+    while (root->lnext != NULL) {
+        root = root->lnext;
+    }
+    return root;
+}
+
+struct node* largest(struct node* root) {
+    while (root->rnext != NULL) {
+        root = root->rnext;
+    }
+    return root;
+}
+
+int height(struct node* root) {
+    if (root == NULL) {
+        return -1;
+    }
+    int leftH = height(root->lnext);
+    int rightH = height(root->rnext);
+    if(leftH>rightH)
+    return (leftH+1);
+    else 
+    return(rightH+1);
+
+    
+}
+
+
+void printMenu() {
+    printf("Binary Search Tree Menu:\n");
+    printf("1. Insert element\n");
+    printf("2. Preorder traversal\n");
+    printf("3. Inorder traversal\n");
+    printf("4. Postorder traversal\n");
+    printf("5. Search for key\n");
+    printf("6. Find smallest element\n");
+    printf("7. Find largest element\n");
+    printf("8. Calculate height of the tree\n");
+    printf("0. Exit\n");
+    printf("Enter your choice: ");
+}
+
+int main() {
+    struct node* root = NULL;
+
+    int choice;
+    do {
+        printMenu();
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1: {
+                int element;
+                printf("Enter element to insert: ");
+                scanf("%d", &element);
+                root = insert(root, element);
+                break;
+            }
+            case 2:
+                printf("Preorder traversal: ");
+                preorder(root);
+                printf("\n");
+                break;
+            case 3:
+                printf("Inorder traversal: ");
+                inorder(root);
+                printf("\n");
+                break;
+            case 4:
+                printf("Postorder traversal: ");
+                postorder(root);
+                printf("\n");
+                break;
+            case 5: {
+                int key;
+                printf("Enter key to search: ");
+                scanf("%d", &key);
+                int result = search(root, key);
+                if (result != 0) {
+                    printf("Key found\n");
+                } else {
+                    printf("Key not found\n");
+                }
+                break;
+            }
+            case 6: {
+            	if(root==NULL)
+            	{
+            		printf("No key present.");
+            		break;
+				}
+                struct node* smallestNode = smallest(root);
+                printf("The smallest element is %d\n", smallestNode->data);
+                break;
+            }
+            case 7: {
+                struct node* largestNode = largest(root);
+                printf("The largest element is %d\n", largestNode->data);
+                break;
+            }
+            case 8: {
+                int treeHeight = height(root);
+                printf("The height of the tree is %d\n", treeHeight);
+                break;
+            }
+            case 0:
+                printf("Exiting program. Goodbye!\n");
+                break;
+            default:
+                printf("Invalid choice. Please enter a valid option.\n");
+        }
+
+    } while (choice != 0);
+
+  
+    return 0;
+}
