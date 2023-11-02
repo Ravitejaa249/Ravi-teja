@@ -1,75 +1,108 @@
 #include <stdio.h>
 #include <stdlib.h>
-int c = 0;
 
-void merge(int arr[], int left[], int leftsize, int right[], int rightsize) {
-    int i = 0, j = 0, k = 0;
-    
-    while (i < leftsize && j < rightsize) {
-        if (left[i] <= right[j])
-            arr[k++] = left[i++];
-        else{
-            arr[k++] = right[j++];
-            c += leftsize - i;
-        }
+struct ListNode {
+    int val;
+    struct ListNode* next;
+};
+
+struct ListNode* merge(struct ListNode* left, struct ListNode* right) {
+    struct ListNode* result = NULL;
+
+    if (left == NULL)
+        return right;
+    if (right == NULL)
+        return left;
+
+    if (left->val <= right->val) {
+        result = left;
+        result->next = merge(left->next, right);
+    } else {
+        result = right;
+        result->next = merge(left, right->next);
     }
-    
-    while (i < leftsize)
-        arr[k++] = left[i++];
-    
-    while (j < rightsize)
-        arr[k++] = right[j++];
+
+    return result;
 }
 
-void mergesort(int arr[], int size) {
-    if (size <= 1)
+void split(struct ListNode* source, struct ListNode** left, struct ListNode** right) {
+    struct ListNode* fast;
+    struct ListNode* slow;
+    slow = source;
+    fast = source->next;
+
+    while (fast != NULL) {
+        fast = fast->next;
+        if (fast != NULL) {
+            slow = slow->next;
+            fast = fast->next;
+        }
+    }
+
+    *left = source;
+    *right = slow->next;
+    slow->next = NULL;
+}
+
+void mergeSort(struct ListNode** headRef) {
+    struct ListNode* head = *headRef;
+    struct ListNode* left;
+    struct ListNode* right;
+
+    if (head == NULL || head->next == NULL) {
         return;
-    
-    int mid = size / 2;
-    int left[mid];
-    int right[size - mid];
-    
-    for (int i = 0; i < mid; i++)
-        left[i] = arr[i];
-    
-    for (int i = mid; i < size; i++)
-        right[i - mid] = arr[i];
-    
-    mergesort(left, mid);
-    mergesort(right, size - mid);
-    
-    merge(arr, left, mid, right, size - mid);
+    }
+
+    split(head, &left, &right);
+
+    mergeSort(&left);
+    mergeSort(&right);
+
+    *headRef = merge(left, right);
+}
+
+void insert(struct ListNode** headRef, int data) {
+    struct ListNode* newNode = (struct ListNode*)malloc(sizeof(struct ListNode));
+    newNode->val = data;
+    newNode->next = NULL;
+
+    if (*headRef == NULL) {
+        *headRef = newNode;
+    } else {
+        struct ListNode* current = *headRef;
+        while (current->next != NULL) {
+            current = current->next;
+        }
+        current->next = newNode;
+    }
+}
+
+void printList(struct ListNode* head) {
+    struct ListNode* current = head;
+    while (current != NULL) {
+        printf("%d ", current->val);
+        current = current->next;
+    }
+    printf("\n");
 }
 
 int main() {
-    int n,y;
-    while(1)
-    {
-        printf("\nEnter 1 to start / 0 to exit:");
-        scanf("%d",&y);
-        if(y==1)
-        {
-            printf("Enter the size of the list:");
-            scanf("%d", &n);
-    
-            int arr[n];
-            for (int i = 0; i < n; i++){
-                 printf("Enter the number %d:",i);
-                scanf("%d", &arr[i]);
-            }
-            c = 0;
-            mergesort(arr, n);
-           
-           printf("\nSorted List: ");
-            for (int i = 0; i < n; i++)
-                printf("%d ", arr[i]);
-            
-            printf("\nNumber of inversions: %d\n", c);
-        }
-        else
-        {
-            exit(0);
-        }
+    struct ListNode* head = NULL;
+
+    int n, data;
+    printf("Enter the number of elements in the linked list: ");
+    scanf("%d", &n);
+
+    printf("Enter the unsorted elements: ");
+    for (int i = 0; i < n; i++) {
+        scanf("%d", &data);
+        insert(&head, data);
     }
+
+    mergeSort(&head);
+
+    printf("Sorted list: ");
+    printList(head);
+
     return 0;
 }
